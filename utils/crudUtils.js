@@ -1,3 +1,4 @@
+// utils/crudUtils.js
 const mongoose = require('mongoose');
 
 // Function to get all documents
@@ -14,6 +15,9 @@ const _getAll = async (req, res, model) => {
 const _getDataListById = async (req, res, model, fieldName, fieldValue) => {
   try {
     const data = await model.find({ [fieldName]: fieldValue });
+    if (!data.length) {
+      return res.status(404).json({ error: "Record not found" });
+    }
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -23,21 +27,22 @@ const _getDataListById = async (req, res, model, fieldName, fieldValue) => {
 // Function to update a document by its ID
 const _update = async (req, res, model, id) => {
   try {
-    const result = await model.updateOne({ _id: id }, req.body);
-    if (result.nModified === 0) {
+    const result = await model.findByIdAndUpdate(id, req.body, { new: true });
+    if (!result) {
       return res.status(404).json({ error: "Record not found" });
     }
-    res.status(200).json({ message: "Update successful" });
+    res.status(200).json({ message: "Update successful", data: result });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+
 // Function to delete a document by its ID
 const _deleteRecord = async (req, res, model, id) => {
   try {
-    const result = await model.deleteOne({ _id: id });
-    if (result.deletedCount === 0) {
+    const result = await model.findByIdAndDelete(id);
+    if (!result) {
       return res.status(404).json({ error: "Record not found" });
     }
     res.status(200).json({ message: "Deletion successful" });
@@ -49,8 +54,9 @@ const _deleteRecord = async (req, res, model, id) => {
 // Function to add a new document
 const _add = async (req, res, model) => {
   try {
-    const data = await model.create(req.body);
-    res.status(201).json(data);
+    const data = new model(req.body);
+    const savedData = await data.save();
+    res.status(201).json(savedData);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

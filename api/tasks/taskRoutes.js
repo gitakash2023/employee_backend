@@ -1,12 +1,16 @@
 const express = require('express');
-const { getAllTasks, getTaskById, createTask, updateTask, deleteTask } = require('../tasks/taskController');
-const authenticate = require('../middleware/authMiddleware');
+const { getAllTasks, getTaskById, createTask, updateTask, deleteTask } = require('./taskController');
+const { validateTaskId } = require('../../middleware/validationMiddleware');
+const { authenticateJWT } = require('../../middleware/authMiddleware');
 const router = express.Router();
 
-router.get('/', authenticate, getAllTasks);
-router.get('/:id', authenticate, getTaskById);
-router.post('/', authenticate, createTask);
-router.put('/:id', authenticate, updateTask);
-router.delete('/:id', authenticate, deleteTask);
+// Apply JWT authentication middleware to all routes
+router.use(authenticateJWT);
+
+router.get('/', getAllTasks); // Fetch tasks for the logged-in user
+router.get('/:id', validateTaskId, getTaskById); // Fetch a specific task by ID
+router.post('/', createTask); // Create a new task
+router.put('/:id', validateTaskId, updateTask); // Update a specific task
+router.delete('/:id', validateTaskId, deleteTask); // Delete a specific task
 
 module.exports = router;

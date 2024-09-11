@@ -1,39 +1,36 @@
-// Import required modules and middleware
 const express = require('express');
-const cors = require('cors'); // Middleware for enabling Cross-Origin Resource Sharing (CORS)
-const helmet = require('helmet'); // Middleware for setting security-related HTTP headers
-const morgan = require('morgan'); // Middleware for HTTP request logging
-const compression = require('compression'); // Middleware for response compression
-const connectDB = require('./config/dbConfig'); // Import dbConfig to connect to MongoDB
-const profileRoutes = require('./api/Profile/profileRoutes'); // Import profile routes
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const compression = require('compression');
+const connectDB = require('./config/dbConfig');
+const profileRoutes = require('./api/Profile/profileRoutes');
 const authRoutes = require('./api/users/userRoutes');
 const taskRoutes = require('./api/tasks/taskRoutes');
-const path = require('path'); // For serving static files
-require('dotenv').config(); // Load environment variables from .env file
+const { authenticateJWT } = require('./middleware/authMiddleware');
+const path = require('path');
+require('dotenv').config();
 
-const app = express(); // Create an Express application instance
-const port = process.env.PORT || 9000; // Set the port to use from environment variables or default to 9000
+const app = express();
+const port = process.env.PORT || 9000;
 
-// Middleware
-app.use(cors()); // Enables CORS to allow requests from different origins
-app.use(helmet()); // Sets various HTTP headers for security
-app.use(morgan('combined')); // Logs HTTP requests in a combined format
-app.use(compression()); // Compresses response bodies for better performance
-app.use(express.json()); // Parses incoming JSON request bodies
+app.use(cors());
+app.use(helmet());
+app.use(morgan('combined'));
+app.use(compression());
+app.use(express.json());
 
-// Connect to MongoDB
-connectDB(); // Call the function to connect to the database using the URI defined in dbConfig
+connectDB();
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/profiles', profileRoutes);
-app.use('/auth', authRoutes);
-app.use('/tasks', taskRoutes);
+app.use('/api/profiles', profileRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/tasks', authenticateJWT, taskRoutes);
 
 app.get('/', (req, res) => {
-  res.send('Welcome to my website'); // Define a simple route that responds with a welcome message
+  res.send('Welcome to my website');
 });
 
-// Start server
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`); // Start the server and log a message when it's running
+  console.log(`Server running on port ${port}`);
 });
