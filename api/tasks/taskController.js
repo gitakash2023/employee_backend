@@ -2,16 +2,41 @@
 const { _getAll, _getDataListById, _update, _deleteRecord, _add } = require('../../utils/crudUtils');
 const Task = require('../tasks/taskModel'); // Adjust path as needed
 
-// Get all tasks for the logged-in user
+const { _paginate } = require('../../utils/paginationUtils'); // Import pagination utility
+
+
+// Get all tasks for the logged-in user with search, filter, and pagination functionality
 const getAllTasks = async (req, res) => {
   try {
-    const userId = req.user.id; // Assuming JWT middleware sets the user ID on req.user
-    const tasks = await Task.find({ user: userId, deleted: false }); // Filter tasks by user ID
-    res.status(200).json(tasks);
+    const userId = req.user.id;
+    const { searchQuery = '', status = 'All', page = 1, pageSize = 5 } = req.query;
+
+    // Create filter object
+    let filter = { user: userId, deleted: false };
+
+    // Apply status filter if not "All"
+    if (status !== 'All') {
+      filter.status = status;
+    }
+
+    // If a search query is provided, filter tasks by title or description
+    if (searchQuery) {
+      filter.$or = [
+        { title: { $regex: searchQuery, $options: 'i' } }, // case-insensitive regex search on title
+        { description: { $regex: searchQuery, $options: 'i' } } // case-insensitive regex search on description
+      ];
+    }
+
+    // Fetch tasks with pagination
+    const paginatedTasks = await _paginate(Task, page, pageSize, filter);
+
+    res.status(200).json(paginatedTasks);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 // Get task by ID
 const getTaskById = async (req, res) => {

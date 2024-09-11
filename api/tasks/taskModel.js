@@ -20,8 +20,8 @@ const taskSchema = new mongoose.Schema({
     },
     status: { 
       type: String, 
-      enum: ['Pending', 'In Progress', 'Completed'], 
-      default: 'Pending' 
+      enum: ['ToDo', 'In Progress', 'Completed'], 
+      default: 'ToDo' 
     }
   }, { timestamps: true });
   
