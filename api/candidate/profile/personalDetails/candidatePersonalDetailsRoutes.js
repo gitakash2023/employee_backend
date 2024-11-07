@@ -1,5 +1,5 @@
 const express = require('express');
-const upload = require('../../../../config/multerConfig'); // Assuming multer is set up for file uploads
+const upload = require('../../../../middleware/fileUpload'); // Use S3 multer configuration
 const {
   createCandidatePersonalDetails,
   getAllCandidatePersonalDetails,
@@ -10,11 +10,12 @@ const {
 
 const router = express.Router();
 
-// Route to create new candidate personal details (POST)
-router.post('/', upload.fields([
-  { name: 'resume_document', maxCount: 1 },
-  { name: 'profile_image', maxCount: 1 } // Added profile_image field
-]), createCandidatePersonalDetails);
+// Route to create candidate personal details (POST)
+router.post(
+  '/',
+  upload.fields([{ name: 'resume_document', maxCount: 1 }, { name: 'profile_image', maxCount: 1 }]),
+  createCandidatePersonalDetails
+);
 
 // Route to get all candidate personal details (GET)
 router.get('/', getAllCandidatePersonalDetails);
@@ -23,10 +24,11 @@ router.get('/', getAllCandidatePersonalDetails);
 router.get('/:id', getCandidatePersonalDetailsById);
 
 // Route to update candidate personal details by ID (PUT)
-router.put('/:id', upload.fields([
-  { name: 'resume_document', maxCount: 1 },
-  { name: 'profile_image', maxCount: 1 } // Added profile_image field
-]), updateCandidatePersonalDetails);
+router.put(
+  '/:id',
+  upload.fields([{ name: 'resume_document', maxCount: 1 }, { name: 'profile_image', maxCount: 1 }]),
+  updateCandidatePersonalDetails
+);
 
 // Route to delete candidate personal details by ID (DELETE)
 router.delete('/:id', deleteCandidatePersonalDetails);

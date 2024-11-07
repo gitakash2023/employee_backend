@@ -1,0 +1,54 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# AWS credentials (if using an AWS config file locally)
+.aws/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Cache directories and files
+.cache/
+.tmp/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE or editor specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# AWS S3 upload config files or any other sensitive config files
+config/
+
+# Ignore uploads directory for local storage if used
+uploads/
+
+# Ignore coverage reports
+coverage/
+
+# Ignore compressed files
+*.zip
+*.tar
+*.gz
+
+# Ignore GitHub action workflows' logs and cache
+.github/

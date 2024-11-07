@@ -10,9 +10,8 @@ const candidatePersonalDetailsSchema = new mongoose.Schema({
   current_salary: { type: Number },
   linkedin_url: { type: String },
   github_url: { type: String },
-  resume_document: { type: String }, 
-  profile_image: { type: String }, 
-  
+  resume_document: { type: String }, // Stores S3 URL
+  profile_image: { type: String },   // Stores S3 URL
   user: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User', 
