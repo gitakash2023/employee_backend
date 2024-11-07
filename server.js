@@ -15,6 +15,7 @@ const graduationEducationRoutes = require('./api/candidate/profile/education/gra
 // const mastersEducationRoutes = require('./api/candidate/profile/education/master/mastersEducationRoutes'); 
 const twelfthEducationRoutes = require('./api/candidate/profile/education/twelfth/twelfthEducationRoutes'); 
 const tenthEducationRoutes = require('./api/candidate/profile/education/tenth/tenthEducationRoutes'); 
+const jobExperienceRoutes = require('./api/candidate/profile/workExperience/jobExperience/jobExperienceRoutes');
 
 const { authenticateJWT } = require('./middleware/authMiddleware');
 const path = require('path');
@@ -44,9 +45,25 @@ app.use('/api/graduation-education', authenticateJWT, graduationEducationRoutes)
 app.use('/api/twelfth-education', authenticateJWT, twelfthEducationRoutes); 
 app.use('/api/tenth-education', authenticateJWT, tenthEducationRoutes); 
 
+
+
+app.use('/api/job-experience', authenticateJWT, jobExperienceRoutes);
+
+const internshipRoutes = require('./api/candidate/profile/workExperience/internshipExperience/internshipExperienceRoutes');
+app.use('/api/internships', authenticateJWT, internshipRoutes);
+
+
+const projectRoutes = require('./api/candidate/profile/projects/projectRoutes');
+app.use('/api/projects', authenticateJWT, projectRoutes)
+
+
+const skillRoutes = require('./api/candidate/profile/skills/skillRoutes');
+app.use('/api/skills', authenticateJWT, skillRoutes);
+
+
 app.get('/', (req, res) => {
-    res.send('Welcome to the Easy Job Backend');
-});
+    res.send('Welcome to the Easy Job Backend  ');
+}); 
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
